@@ -20,7 +20,7 @@ class LM(nn.Module):
         ems = self.embed(Variable(torch.LongTensor(idLine))) # idLineは文の単語id列 ## embedding (len(idLine)*embedSize) ##
         hid = (Variable(torch.zeros(lstm_depth, 1, lstmHid)), Variable(torch.zeros(lstm_depth, 1, lstmHid)))
 
-        # LSTMはコピペでOK #
+        #LSTM#
         ys, _ = self.lstm(ems.view(len(idLine),1,-1), hid)
         ys = ys.view(len(idLine),-1) # Linearで扱えるように変形
         
@@ -28,7 +28,7 @@ class LM(nn.Module):
         zs_log_softmax = F.log_softmax(zs, dim=1)  ## zsをlog_softmaxに通す ##
         return zs_log_softmax
 
-    # getLossはコピペでOK
+    #getLoss
     def getLoss(self, idLine):
         zs = self.forward(idLine[:-1])
         ts = Variable(torch.LongTensor(idLine[1:]))
