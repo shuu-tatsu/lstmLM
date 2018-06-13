@@ -35,6 +35,16 @@ class LM(nn.Module):
         loss = self.criterion(zs, ts)
         return loss
 
+    def getSentenceLogProb(self, idLine):
+        inp = idLine[:-1]
+        zs = self.forward(inp) # log_softmaxの結果が返ってくる
+        # i番目の確率分布における
+        # i+1単語に対応する確率を取り，足し合わせる
+        H = 0
+        for i in range(len(idLine)-1):
+            H += -zs[i][idLine[i+1]].data[0]
+        return H
+
 if __name__ == '__main__':
     #lm = LM(10)
     #print(lm.getLoss([0,1,2,3,4,5,0]))

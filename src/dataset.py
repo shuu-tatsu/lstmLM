@@ -1,15 +1,22 @@
 from collections import Counter
+import pickle
 
 class Dataset:
-  def __init__(self, dataPath):
+  def __init__(self, dataPath=None):
     self.data = []	# [[‘<BOS>’,’this’,’is’,…], …]
     self.idData = []	# [[0,10,21,31,41], [0,20,11,…]…]
     self.id2word = {}	# {10:this, 21:is, …}
     self.word2id = {}	# {this:10, is:21, …}
+    if dataPath:
+        self.setData(dataPath)	# self.dataを作る
+        self.setDict()		# idは単語の頻度順にふる
+        self.setIdData()        # id辞書を使ってself.idDataを作る
 
-    self.setData(dataPath)	# self.dataを作る
-    self.setDict()		# idは単語の頻度順にふる
-    self.setIdData()		# id辞書を使ってself.idDataを作る
+  def save(self, dictPath):
+    pickle.dump((self.id2word, self.word2id), open(dictPath, 'wb'))
+
+  def load(self, dictPath):
+    self.id2word, self.word2id = pickle.load(open(dictPath, 'rb'))
 
   def setData(self,dataPath):
     # パスから生文を読み込む
@@ -53,5 +60,3 @@ class Dataset:
 if __name__ == '__main__':
     dataPass = '/Users/shusuke-t/pytorch-study/lstmLM/data/ptb.train.txt'
     dset = Dataset(dataPass)
-
-    print(dset.id2word)
